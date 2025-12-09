@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Huerto Interactivo de Plantas</title>
+    <link rel="stylesheet" href="huerto.css" />
+    <style>
+        body {
+            background-image: url(oja.jpg);
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2e7d32, #4caf50);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .description {
+            display: block;
+            margin: 15px 0;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #4caf50;
+            text-align: center;
+        }
+        
+        footer h4 {
+            color: #2e7d32;
+            margin: 10px 0;
+        }
+        
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #4caf50;
+        }
+        
+        .empty-message h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        /* Estilos para botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .save-btn {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background-color: #388e3c;
+        }
+        
+        .clear-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .load-example-btn {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .load-example-btn:hover {
+            background-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1> Huerto Escolar </h1>
+            <h2> CBTis.14</h2>
+            <strong class="description">Explora información sobre diferentes tipos de plantas: sus nombres científicos, características y año de descubrimiento. También puedes agregar tus propias plantas.</strong>
+            <strong>Un huerto es un espacio destinado al cultivo de alimentos como verduras, hortalizas, frutas y hierbas, generalmente a pequeña escala para el consumo propio. Puede ser un jardín familiar, un balcón o una terraza, y su propósito principal es producir alimentos frescos, promover la alimentación saludable y servir como una actividad educativa o recreativa. </strong>
+            
+            <div class="action-buttons">
+                <button class="action-btn save-btn" id="savePlantsBtn"> Guardar Huerto</button>
+                <button class="action-btn clear-btn" id="clearPlantsBtn"> Vaciar Huerto</button>
+                <button class="action-btn load-example-btn" id="loadExampleBtn">  Plantas </button>
+            </div>
+        </header>
+        
+        <div class="category-selector">
+            <button class="category-btn active" data-category="all">Todas las plantas</button>
+            <button class="category-btn" data-category="herbs">Hierbas aromáticas</button>
+            <button class="category-btn" data-category="leafy">Hortalizas de hoja</button>
+            <button class="category-btn" data-category="fruits">Frutos</button>
+            <button class="category-btn" data-category="flowers">Flores</button>
+        </div>
+        
+        <div class="plants-container" id="plantsContainer">
+            <!-- Las plantas se cargarán aquí dinámicamente -->
+        </div>
+        
+        <div class="add-plant-form">
+            <h3>Agregar nueva planta</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="plantName">Nombre común:</label>
+                    <input type="text" id="plantName" placeholder="Ej: Albahaca">
+                </div>
+                <div class="form-group">
+                    <label for="scientificName">Nombre científico:</label>
+                    <input type="text" id="scientificName" placeholder="Ej: Ocimum basilicum">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="plantCategory">Categoría:</label>
+                    <select id="plantCategory">
+                        <option value="herbs">Hierbas aromáticas</option>
+                        <option value="leafy">Hortalizas de hoja</option>
+                        <option value="fruits">Frutos</option>
+                        <option value="flowers">Flores</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="discoveryYear">Año de descubrimiento:</label>
+                    <input type="number" id="discoveryYear" min="1000" max="2024" value="1800">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group" style="flex: 2;">
+                    <label for="plantCharacteristics">Características:</label>
+                    <textarea id="plantCharacteristics" placeholder="Describe las características de la planta..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="plantImage">Ruta de la imagen local:</label>
+                    <input type="text" id="plantImage" placeholder="imagenes/albahaca.jpg">
+                    <small style="display: block; margin-top: 5px; color: #888;">
+                        Ejemplo: imagenes/albahaca.jpg<br>
+                        Asegúrate de tener una carpeta "imagenes" junto al archivo HTML
+                    </small>
+                </div>
+            </div>
+            
+            <button class="add-btn" id="addPlantBtn">Agregar planta al huerto</button>
+        </div>
+        
+        <footer>
+            <p><h4>Centro de Bachillerato Tecnológico industrial y de servicios número 14</h4></p>
+            <p><h4>Algunas fechas de descubrimiento son aproximadas.</h4></p>
+        </footer>
+    </div>
+
+    <script>
+        // FUNCIÓN PARA MANEJAR LAS PLANTAS SIN BASE DE DATOS TRADICIONAL
+        
+        // Plantas de ejemplo para cargar si el usuario quiere
+        const Plants = {
+            herbs: [
+                {
+                    name: "Albahaca",
+                    scientific: "Ocimum basilicum",
+                    year: 1753,
+                    characteristics: "Planta aromática anual de la familia de las lamiáceas. Se utiliza en cocina, especialmente en la mediterránea, y tiene propiedades digestivas y antisépticas.",
+                    image: "imagenes/albahaca.webp"
+                },
+                {
+                    name: "Perejil",
+                    scientific: "Petroselinum crispum",
+                    year: 1762,
+                    characteristics: "Planta herbácea bienal, rica en vitaminas A, C y K, y minerales como hierro y calcio. Se utiliza como condimento y tiene propiedades diuréticas.",
+                    image: "imagenes/perejil.jpg"
+                }
+            ],
+            leafy: [
+                {
+                    name: "Espinaca",
+                    scientific: "Spinacia oleracea",
+                    year: 1753,
+                    characteristics: "Planta anual de hojas comestibles, rica en hierro, vitaminas A, C y K. Se consume cruda o cocida y tiene propiedades antioxidantes y antiinflamatorias.",
+                    image: "imagenes/espinaca.jpg"
+                }
+            ],
+            fruits: [
+                {
+                    name: "Tomate",
+                    scientific: "Solanum lycopersicum",
+                    year: 1753,
+                    characteristics: "Fruto de la tomatera, planta de la familia de las solanáceas. Rico en licopeno, vitamina C y potasio. Se consume fresco o en salsas.",
+                    image: "imagenes/tomate.png"
+                },
+                {
+                    name: "Fresa",
+                    scientific: "Fragaria × ananassa",
+                    year: 1753,
+                    characteristics: "Fruto de la planta de la fresa, de la familia de las rosáceas. Rica en vitamina C, antioxidantes y fibra. Tiene propiedades antiinflamatorias y antioxidantes.",
+                    image: "imagenes/fresa.jpg"
+                }
+            ],
+            flowers: [
+                {
+                    name: "Rosa",
+                    scientific: "Rosa spp.",
+                    year: 1753,
+                    characteristics: "Flor del rosal, arbusto espinoso de la familia de las rosáceas. Simboliza amor y pasión. Se utiliza en ornamentación, perfumería y cosmética.",
+                    image: "imagenes/rosa.webp"
+                },
+                {
+                    name: "Girasol",
+                    scientific: "Helianthus annuus",
+                    year: 1753,
+                    characteristics: "Planta anual de la familia de las asteráceas, con grandes flores amarillas que giran siguiendo al sol. Se cultiva por sus semillas comestibles y aceite.",
+                    image: "imagenes/girasol.jpg"
+                }
+            ]
+        };
+
+        // Estado inicial de las plantas (vacío o cargado desde localStorage)
+        let plantasGuardadas = {
+            herbs: [],
+            leafy: [],
+            fruits: [],
+            flowers: []
+        };
+        
+        let categoriaActual = "all";
+        
+        // Referencias a elementos DOM
+        const plantsContainer = document.getElementById('plantsContainer');
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        const addPlantBtn = document.getElementById('addPlantBtn');
+        const savePlantsBtn = document.getElementById('savePlantsBtn');
+        const clearPlantsBtn = document.getElementById('clearPlantsBtn');
+        const loadExampleBtn = document.getElementById('loadExampleBtn');
+        
+        // CARGAR PLANTAS DESDE LOCALSTORAGE
+        function cargarPlantasGuardadas() {
+            const guardadas = localStorage.getItem('huertoPlantasCBTis14');
+            if (guardadas) {
+                plantasGuardadas = JSON.parse(guardadas);
+                console.log(" Plantas cargadas desde localStorage");
+            }
+        }
+        
+        // GUARDAR PLANTAS EN LOCALSTORAGE
+        function guardarPlantas() {
+            localStorage.setItem('huertoPlantasCBTis14', JSON.stringify(plantasGuardadas));
+            console.log(" Plantas guardadas en localStorage");
+            alert("¡Huerto guardado correctamente! Las plantas se mantendrán incluso si cierras el navegador.");
+        }
+        
+        // LIMPIAR TODAS LAS PLANTAS
+        function limpiarPlantas() {
+            if (confirm("¿Estás seguro de que quieres vaciar todo el huerto? Esta acción no se puede deshacer.")) {
+                plantasGuardadas = {
+                    herbs: [],
+                    leafy: [],
+                    fruits: [],
+                    flowers: []
+                };
+                localStorage.removeItem('huertoPlantasCBTis14');
+                mostrarPlantas(categoriaActual);
+                alert("Huerto vaciado correctamente.");
+            }
+        }
+        
+        // CARGAR PLANTAS DE EJEMPLO
+        function cargarPlantasEjemplo() {
+            if (confirm("¿Deseas cargar plantas de ejemplo? Esto agregará algunas plantas comunes a tu huerto.")) {
+                // Combinar plantas existentes con las de ejemplo
+                for (const categoria in examplePlants) {
+                    plantasGuardadas[categoria] = [
+                        ...plantasGuardadas[categoria],
+                        ...examplePlants[categoria]
+                    ];
+                }
+                guardarPlantas();
+                mostrarPlantas(categoriaActual);
+                alert("Plantas de ejemplo agregadas al huerto.");
+            }
+        }
+        
+        // VERIFICAR SI UNA IMAGEN EXISTE
+        function verificarImagen(rutaImagen) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(true);
+                img.onerror = () => resolve(false);
+                img.src = rutaImagen;
+            });
+        }
+        
+        // MOSTRAR PLANTAS SEGÚN CATEGORÍA
+        async function mostrarPlantas(categoria = "all") {
+            plantsContainer.innerHTML = "";
+            
+            let plantasAMostrar = [];
+            
+            if (categoria === "all") {
+                // Combinar todas las plantas de todas las categorías
+                for (const cat in plantasGuardadas) {
+                    plantasAMostrar = plantasAMostrar.concat(plantasGuardadas[cat].map(planta => ({...planta, categoria: cat})));
+                }
+            } else {
+                // Mostrar solo plantas de la categoría seleccionada
+                plantasAMostrar = plantasGuardadas[categoria].map(planta => ({...planta, categoria: categoria}));
+            }
+            
+            // Mostrar mensaje si no hay plantas
+            if (plantasAMostrar.length === 0) {
+                plantsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <h3> El huerto está vacío</h3>
+                        <p>¡No hay plantas en esta categoría!</p>
+                        <p>Puedes:</p>
+                        <p>1. Agregar una nueva planta usando el formulario</p>
+                        <p>2. Cargar plantas de ejemplo desde el botón arriba</p>
+                        <p>3. Las plantas se guardarán automáticamente</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Procesar cada planta
+            for (const planta of plantasAMostrar) {
+                const tarjetaPlanta = document.createElement('div');
+                tarjetaPlanta.className = 'plant-card';
+                
+                let htmlImagen = '';
+                
+                // Verificar si la imagen existe
+                if (planta.image) {
+                    const imagenExiste = await verificarImagen(planta.image);
+                    
+                    if (imagenExiste) {
+                        htmlImagen = `<img src="${planta.image}" alt="${planta.name}" class="plant-img">`;
+                    } else {
+                        htmlImagen = `<div class="img-placeholder">${planta.name}</div>`;
+                    }
+                } else {
+                    htmlImagen = `<div class="img-placeholder">${planta.name}</div>`;
+                }
+                
+                tarjetaPlanta.innerHTML = `
+                    ${htmlImagen}
+                    <div class="plant-info">
+                        <h2 class="plant-name">${planta.name}</h2>
+                        <p class="scientific-name">${planta.scientific}</p>
+                        <span class="plant-year">Descubierta en ${planta.year}</span>
+                        <p class="plant-characteristics">${planta.characteristics}</p>
+                        <small style="color: #777;">Categoría: ${planta.categoria === 'herbs' ? 'Hierbas' : 
+                                            planta.categoria === 'leafy' ? 'Hortalizas' : 
+                                            planta.categoria === 'fruits' ? 'Frutos' : 'Flores'}</small>
+                    </div>
+                `;
+                
+                plantsContainer.appendChild(tarjetaPlanta);
+            }
+        }
+        
+        // CAMBIAR CATEGORÍA ACTIVA
+        function cambiarCategoriaActiva(categoria) {
+            categoriaActual = categoria;
+            
+            // Actualizar botones
+            categoryButtons.forEach(boton => {
+                if (boton.dataset.category === categoria) {
+                    boton.classList.add('active');
+                } else {
+                    boton.classList.remove('active');
+                }
+            });
+            
+            // Mostrar plantas
+            mostrarPlantas(categoria);
+        }
+        
+        // AGREGAR UNA NUEVA PLANTA
+        async function agregarNuevaPlanta() {
+            const nombre = document.getElementById('plantName').value.trim();
+            const cientifico = document.getElementById('scientificName').value.trim();
+            const categoria = document.getElementById('plantCategory').value;
+            const año = parseInt(document.getElementById('discoveryYear').value);
+            const caracteristicas = document.getElementById('plantCharacteristics').value.trim();
+            const imagen = document.getElementById('plantImage').value.trim();
+            
+            // Validar datos
+            if (!nombre || !cientifico || !caracteristicas) {
+                alert("Por favor completa todos los campos obligatorios");
+                return;
+            }
+            
+            if (año < 1000 || año > 2024) {
+                alert("Por favor ingresa un año válido (entre 1000 y 2024)");
+                return;
+            }
+            
+            // Verificar si la imagen existe
+            let imagenExiste = false;
+            if (imagen) {
+                imagenExiste = await verificarImagen(imagen);
+                if (!imagenExiste) {
+                    const usarSinImagen = confirm(`La imagen "${imagen}" no fue encontrada. ¿Deseas agregar la planta sin imagen?`);
+                    if (!usarSinImagen) {
+                        return;
+                    }
+                }
+            }
+            
+            // Crear nueva planta
+            const nuevaPlanta = {
+                name: nombre,
+                scientific: cientifico,
+                year: año,
+                characteristics: caracteristicas,
+                image: imagenExiste ? imagen : null
+            };
+            
+            // Agregar a las plantas guardadas
+            plantasGuardadas[categoria].push(nuevaPlanta);
+            
+            // Guardar automáticamente en localStorage
+            guardarPlantas();
+            
+            // Limpiar formulario
+            document.getElementById('plantName').value = '';
+            document.getElementById('scientificName').value = '';
+            document.getElementById('discoveryYear').value = '1800';
+            document.getElementById('plantCharacteristics').value = '';
+            document.getElementById('plantImage').value = '';
+            
+            // Actualizar vista si es necesario
+            if (categoriaActual === "all" || categoriaActual === categoria) {
+                await mostrarPlantas(categoriaActual);
+            }
+            
+            // Mostrar mensaje de confirmación
+            alert(`¡${nombre} ha sido agregada al huerto y guardada!`);
+        }
+        
+        // INICIALIZAR LA APLICACIÓN
+        function iniciarAplicacion() {
+            // Cargar plantas guardadas
+            cargarPlantasGuardadas();
+            
+            // Configurar eventos para botones de categoría
+            categoryButtons.forEach(boton => {
+                boton.addEventListener('click', () => {
+                    cambiarCategoriaActiva(boton.dataset.category);
+                });
+            });
+            
+            // Configurar eventos para los botones de acción
+            addPlantBtn.addEventListener('click', agregarNuevaPlanta);
+            savePlantsBtn.addEventListener('click', guardarPlantas);
+            clearPlantsBtn.addEventListener('click', limpiarPlantas);
+            loadExampleBtn.addEventListener('click', cargarPlantasEjemplo);
+            
+            // Mostrar todas las plantas al inicio
+            mostrarPlantas();
+            
+            // Mostrar mensaje si es la primera vez
+            if (!localStorage.getItem('huertoPlantasCBTis14')) {
+                console.log(" Bienvenido al Huerto Escolar CBTis.14");
+                console.log("Agrega plantas o carga el ejemplo para empezar");
+            }
+        }
+        
+        // Inicializar cuando el DOM esté cargado
+        document.addEventListener('DOMContentLoaded', iniciarAplicacion);
+    </script>
+</body>
+</html>
